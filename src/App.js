@@ -1,26 +1,51 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useState} from 'react'
 import './App.css';
+import CustomerTable from "./components/CustomerTable/CustomerTable"
+import {makeStyles} from "@material-ui/core/styles"
+import CustomerDialog from "./components/CustomerDialog/CustomerDialog"
+import * as persistence from './persistence/persistence'
+
+const useStyles = makeStyles(theme => ({
+    root: {
+        width: '100%',
+    }
+}))
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const classes = useStyles()
+    const [customers, setCustomers] = useState(persistence.getCustomers())
+    const [openCustomerDialog, setOpenCustomerDialog] = useState(false)
+    const [customerData, setCustomerData] = useState({})
+
+    const addOrEditCustomer = customer => {
+        setCustomerData(customer)
+        setOpenCustomerDialog(true)
+    }
+
+    const saveCustomer = customer => {
+        setCustomers(persistence.saveCustomer(customer))
+        setOpenCustomerDialog(false)
+    }
+
+    const deleteCustomer = id => {
+        setCustomers(persistence.deleteCustomer(id))
+    }
+
+    return (
+        <div className={classes.root}>
+            <CustomerTable
+                customers={customers}
+                addOrEditCustomer={addOrEditCustomer}
+                deleteCustomer={deleteCustomer}
+            />
+            <CustomerDialog
+                open={openCustomerDialog}
+                cancel={() => setOpenCustomerDialog(false)}
+                saveCustomer={saveCustomer}
+                customer={customerData}
+            />
+        </div>
+    )
 }
 
 export default App;
