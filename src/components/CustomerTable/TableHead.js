@@ -10,12 +10,10 @@ const headCells = [
     {id: 'name', numeric: false, disablePadding: true, label: 'Name'},
     {id: 'email', numeric: true, disablePadding: false, label: 'Email'},
     {id: 'address', numeric: true, disablePadding: false, label: 'Address'},
-    // {id: 'carbs', numeric: true, disablePadding: false, label: 'Carbs (g)'},
-    // {id: 'protein', numeric: true, disablePadding: false, label: 'Protein (g)'},
 ];
 
 
-export default function EnhancedTableHead(props) {
+export default function CustomerTableHead(props) {
     const {classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort} = props;
     const createSortHandler = property => event => {
         onRequestSort(event, property);
@@ -28,7 +26,7 @@ export default function EnhancedTableHead(props) {
                 {headCells.map(headCell => (
                     <TableCell
                         key={headCell.id}
-                        align={headCell.numeric ? 'right' : 'left'}
+                        align={'left'}
                         padding={headCell.disablePadding ? 'none' : 'default'}
                         sortDirection={orderBy === headCell.id ? order : false}
                     >
@@ -51,11 +49,9 @@ export default function EnhancedTableHead(props) {
     );
 }
 
-EnhancedTableHead.propTypes = {
+CustomerTableHead.propTypes = {
     classes: PropTypes.object.isRequired,
     numSelected: PropTypes.number.isRequired,
-    onRequestSort: PropTypes.func.isRequired,
-    onSelectAllClick: PropTypes.func.isRequired,
     order: PropTypes.oneOf(['asc', 'desc']).isRequired,
     orderBy: PropTypes.string.isRequired,
     rowCount: PropTypes.number.isRequired,

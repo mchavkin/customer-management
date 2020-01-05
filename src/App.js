@@ -4,6 +4,7 @@ import CustomerTable from "./components/CustomerTable/CustomerTable"
 import {makeStyles} from "@material-ui/core/styles"
 import CustomerDialog from "./components/CustomerDialog/CustomerDialog"
 import * as persistence from './persistence/persistence'
+import GeocodeBar from "./components/GeocodeBar/GeocodeBar"
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -33,6 +34,7 @@ function App() {
 
     return (
         <div className={classes.root}>
+            <GeocodeBar/>
             <CustomerTable
                 customers={customers}
                 addOrEditCustomer={addOrEditCustomer}

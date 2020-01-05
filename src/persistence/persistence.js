@@ -28,3 +28,12 @@ export const saveCustomer = (customer) => {
     saveCustomers(customers)
     return customers
 }
+
+export const getApiKey = () => {
+    return localStorage.getItem('apiKey')
+}
+
+export const saveApiKey = (apiKey) => {
+    localStorage.setItem('apiKey', apiKey)
+}
+

@@ -13,7 +13,7 @@ import Tooltip from "@material-ui/core/Tooltip"
 import IconButton from "@material-ui/core/IconButton"
 import PersonAddIcon from "@material-ui/icons/PersonAdd"
 import DeleteIcon from '@material-ui/icons/Delete'
-import EnhancedTableHead from "./TableHead"
+import CustomerTableHead from "./TableHead"
 import Button from "@material-ui/core/Button"
 
 function desc(a, b, orderBy) {
@@ -83,35 +83,6 @@ export default function CustomerTable(props) {
         setOrderBy(property)
     }
 
-    const handleSelectAllClick = event => {
-        if (event.target.checked) {
-            const newSelecteds = rows.map(n => n.name)
-            setSelected(newSelecteds)
-            return
-        }
-        setSelected([])
-    }
-
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name)
-        let newSelected = []
-
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name)
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1))
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1))
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(
-                selected.slice(0, selectedIndex),
-                selected.slice(selectedIndex + 1),
-            )
-        }
-
-        setSelected(newSelected)
-    }
-
     const handleChangePage = (event, newPage) => {
         setPage(newPage)
     }
@@ -121,7 +92,6 @@ export default function CustomerTable(props) {
         setPage(0)
     }
 
-    const isSelected = name => selected.indexOf(name) !== -1
 
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage)
 
@@ -154,12 +124,12 @@ export default function CustomerTable(props) {
                         <Table
                             className={classes.table}
                         >
-                            <EnhancedTableHead
+                            <CustomerTableHead
                                 classes={classes}
                                 numSelected={selected.length}
                                 order={order}
                                 orderBy={orderBy}
-                                onSelectAllClick={handleSelectAllClick}
+                                // onSelectAllClick={handleSelectAllClick}
                                 onRequestSort={handleRequestSort}
                                 rowCount={rows.length}
                             />
@@ -167,17 +137,13 @@ export default function CustomerTable(props) {
                                 {stableSort(rows, getSorting(order, orderBy))
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((row, index) => {
-                                        const isItemSelected = isSelected(row.name)
                                         const labelId = `enhanced-table-checkbox-${index}`
 
                                         return (
                                             <TableRow
                                                 hover
                                                 onClick={() => props.addOrEditCustomer(row)}
-                                                aria-checked={isItemSelected}
-                                                tabIndex={-1}
                                                 key={row.id}
-                                                selected={isItemSelected}
                                             >
                                                 <TableCell padding="checkbox">
                                                     <Tooltip title="Delete customer">
@@ -193,8 +159,8 @@ export default function CustomerTable(props) {
                                                 <TableCell component="th" id={labelId} scope="row" padding="none">
                                                     {row.name}
                                                 </TableCell>
-                                                <TableCell align="right">{row.email}</TableCell>
-                                                <TableCell align="right">
+                                                <TableCell>{row.email}</TableCell>
+                                                <TableCell>
                                                     {row.formatted_address}
                                                 </TableCell>
                                             </TableRow>
