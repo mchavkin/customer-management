@@ -15,6 +15,7 @@ import PersonAddIcon from "@material-ui/icons/PersonAdd"
 import DeleteIcon from '@material-ui/icons/Delete'
 import CustomerTableHead from "./TableHead"
 import Button from "@material-ui/core/Button"
+import DeleteConfirmation from "./DeleteConfirmation"
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -73,6 +74,7 @@ export default function CustomerTable(props) {
     const [selected, setSelected] = useState([])
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(5)
+    const [deleteCustomer, setDeleteCustomer] = useState(null)
 
     const rows = props.customers
 
@@ -92,95 +94,98 @@ export default function CustomerTable(props) {
         setPage(0)
     }
 
-
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage)
-
     return (
-        <Paper className={classes.paper}>
+        <>
+            <Paper className={classes.paper}>
 
-            <Toolbar>
-                <Typography className={classes.title} variant="h6" id="tableTitle">
-                    Customers
-                </Typography>
-                <Tooltip title="New customer">
-                    <Button
-                        onClick={() => props.addOrEditCustomer({})}
-                        variant="contained"
-                        color="primary"
-                        startIcon={<PersonAddIcon/>}
-                    >
-                        New customer
-                    </Button>
-                </Tooltip>
-            </Toolbar>
-
-            {!rows.length ?
-                <Typography>
-                    There are no registered customers. To add a customer click the button at the right upper corner
-                </Typography>
-                :
-                <>
-                    <TableContainer>
-                        <Table
-                            className={classes.table}
+                <Toolbar>
+                    <Typography className={classes.title} variant="h6" id="tableTitle">
+                        Customers
+                    </Typography>
+                    <Tooltip title="New customer">
+                        <Button
+                            onClick={() => props.addOrEditCustomer({})}
+                            variant="contained"
+                            color="primary"
+                            startIcon={<PersonAddIcon/>}
                         >
-                            <CustomerTableHead
-                                classes={classes}
-                                numSelected={selected.length}
-                                order={order}
-                                orderBy={orderBy}
-                                // onSelectAllClick={handleSelectAllClick}
-                                onRequestSort={handleRequestSort}
-                                rowCount={rows.length}
-                            />
-                            <TableBody>
-                                {stableSort(rows, getSorting(order, orderBy))
-                                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                    .map((row, index) => {
-                                        const labelId = `enhanced-table-checkbox-${index}`
+                            New customer
+                        </Button>
+                    </Tooltip>
+                </Toolbar>
 
-                                        return (
-                                            <TableRow
-                                                hover
-                                                onClick={() => props.addOrEditCustomer(row)}
-                                                key={row.id}
-                                            >
-                                                <TableCell padding="checkbox">
-                                                    <Tooltip title="Delete customer">
-                                                        <IconButton onClick={(event) => {
-                                                            event.stopPropagation()
-                                                            props.deleteCustomer(row.id)
-                                                        }}>
-                                                            <DeleteIcon/>
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                </TableCell>
+                {!rows.length ?
+                    <Typography>
+                        There are no registered customers. To add a customer click the button at the right upper corner
+                    </Typography>
+                    :
+                    <>
+                        <TableContainer>
+                            <Table
+                                className={classes.table}
+                            >
+                                <CustomerTableHead
+                                    classes={classes}
+                                    numSelected={selected.length}
+                                    order={order}
+                                    orderBy={orderBy}
+                                    onRequestSort={handleRequestSort}
+                                    rowCount={rows.length}
+                                />
+                                <TableBody>
+                                    {stableSort(rows, getSorting(order, orderBy))
+                                        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                        .map((row, index) => {
+                                            const labelId = `enhanced-table-checkbox-${index}`
 
-                                                <TableCell component="th" id={labelId} scope="row" padding="none">
-                                                    {row.name}
-                                                </TableCell>
-                                                <TableCell>{row.email}</TableCell>
-                                                <TableCell>
-                                                    {row.formatted_address}
-                                                </TableCell>
-                                            </TableRow>
-                                        )
-                                    })}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                    < TablePagination
-                        rowsPerPageOptions={[5, 10, 25]}
-                        component="div"
-                        count={rows.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onChangePage={handleChangePage}
-                        onChangeRowsPerPage={handleChangeRowsPerPage}
-                    />
-                </>
-            }
+                                            return (
+                                                <TableRow
+                                                    hover
+                                                    onClick={() => props.addOrEditCustomer(row)}
+                                                    key={row.id}
+                                                >
+                                                    <TableCell padding="checkbox">
+                                                        <Tooltip title="Delete customer">
+                                                            <IconButton onClick={(event) => {
+                                                                event.stopPropagation()
+                                                                // props.deleteCustomer(row.id)
+                                                                setDeleteCustomer(row)
+                                                            }}>
+                                                                <DeleteIcon/>
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                    </TableCell>
 
-        </Paper>
+                                                    <TableCell component="th" id={labelId} scope="row" padding="none">
+                                                        {row.name}
+                                                    </TableCell>
+                                                    <TableCell>{row.email}</TableCell>
+                                                    <TableCell>
+                                                        {row.formatted_address}
+                                                    </TableCell>
+                                                </TableRow>
+                                            )
+                                        })}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                        < TablePagination
+                            rowsPerPageOptions={[5, 10, 25]}
+                            component="div"
+                            count={rows.length}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            onChangePage={handleChangePage}
+                            onChangeRowsPerPage={handleChangeRowsPerPage}
+                        />
+                    </>
+                }
+                <DeleteConfirmation
+                    customer={deleteCustomer}
+                    closeConfirmation={() => setDeleteCustomer(null)}
+                    deleteCustomer={props.deleteCustomer}
+                 />
+            </Paper>
+        </>
     )
 }

@@ -72,7 +72,7 @@ export default function GeocodeBar() {
                                            setApiKey(event.target.value)
                                        }}
                                        helperText='Input a valid Google API key'
-                                       inputProps={{style: {color: 'white'}}}
+                                       InputProps={{style: {color: 'white'}}}
                                        FormHelperTextProps={{style: {color: 'white'}}}
                             />
                         </Box>
