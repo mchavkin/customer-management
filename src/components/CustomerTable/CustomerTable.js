@@ -204,7 +204,7 @@ export default function CustomerTable(props) {
 }
 
 CustomerTable.propTypes = {
-    customers: PropTypes.object,
+    customers: PropTypes.array,
     addOrEditCustomer: PropTypes.func.isRequired,
     deleteCustomer: PropTypes.func.isRequired
 }

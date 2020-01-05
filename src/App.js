@@ -1,5 +1,4 @@
 import React, {useState} from 'react'
-import './App.css';
 import CustomerTable from "./components/CustomerTable/CustomerTable"
 import {makeStyles} from "@material-ui/core/styles"
 import CustomerDialog from "./components/CustomerDialog/CustomerDialog"
