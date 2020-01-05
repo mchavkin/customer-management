@@ -35,6 +35,9 @@ const useStyles = makeStyles(theme => ({
     },
     error: {
         color: 'red'
+    },
+    message: {
+        padding: theme.spacing(1)
     }
 }))
 
@@ -168,10 +171,10 @@ export default function CustomerDialog(props) {
                         <>
                             {addressSuggestion &&
                             <>
-                                <Typography paragraph>
+                                <Typography paragraph className={classes.message}>
                                     We found the following address:
                                 </Typography>
-                                <Typography paragraph>
+                                <Typography paragraph className={classes.message}>
                                     {addressSuggestion.formatted_address}
                                 </Typography>
                             </>
