@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {makeStyles} from '@material-ui/core/styles'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
@@ -13,9 +13,10 @@ import Tooltip from "@material-ui/core/Tooltip"
 import IconButton from "@material-ui/core/IconButton"
 import PersonAddIcon from "@material-ui/icons/PersonAdd"
 import DeleteIcon from '@material-ui/icons/Delete'
-import CustomerTableHead from "./TableHead"
+import CustomerTableHead from "./CustomerTableHead"
 import Button from "@material-ui/core/Button"
 import DeleteConfirmation from "./DeleteConfirmation"
+import PropTypes from "prop-types"
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -49,7 +50,7 @@ const useStyles = makeStyles(theme => ({
         marginBottom: theme.spacing(2),
     },
     table: {
-        minWidth: 750,
+        minWidth: 550,
     },
     visuallyHidden: {
         border: 0,
@@ -70,13 +71,26 @@ const useStyles = makeStyles(theme => ({
 export default function CustomerTable(props) {
     const classes = useStyles()
     const [order, setOrder] = useState('asc')
-    const [orderBy, setOrderBy] = useState('calories')
-    const [selected, setSelected] = useState([])
+    const [orderBy, setOrderBy] = useState(null)
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(5)
     const [deleteCustomer, setDeleteCustomer] = useState(null)
+    const [filteredRows, setFilteredRows] = useState(props.customers)
+    const [filter, setFilter] = useState(
+        {
+            name: '',
+            email: '',
+            formatted_address: ''
+        })
 
-    const rows = props.customers
+    useEffect(() => {
+    const filteredCustomers = props.customers.filter(customer =>
+        customer.name.toLowerCase().includes(filter.name.toLowerCase()) &&
+                        customer.email.toLowerCase().includes(filter.email.toLowerCase()) &&
+                        customer.formatted_address.toLowerCase().includes(filter.formatted_address.toLowerCase()))
+        setFilteredRows(filteredCustomers)
+        setPage(0)
+    }, [props.customers, filter])
 
 
     const handleRequestSort = (event, property) => {
@@ -93,6 +107,7 @@ export default function CustomerTable(props) {
         setRowsPerPage(parseInt(event.target.value, 10))
         setPage(0)
     }
+
 
     return (
         <>
@@ -114,7 +129,7 @@ export default function CustomerTable(props) {
                     </Tooltip>
                 </Toolbar>
 
-                {!rows.length ?
+                {!props.customers.length ?
                     <Typography>
                         There are no registered customers. To add a customer click the button at the right upper corner
                     </Typography>
@@ -126,18 +141,17 @@ export default function CustomerTable(props) {
                             >
                                 <CustomerTableHead
                                     classes={classes}
-                                    numSelected={selected.length}
                                     order={order}
                                     orderBy={orderBy}
                                     onRequestSort={handleRequestSort}
-                                    rowCount={rows.length}
+                                    rowCount={filteredRows.length}
+                                    filter = {filter}
+                                    onFilterChange = {setFilter}
                                 />
                                 <TableBody>
-                                    {stableSort(rows, getSorting(order, orderBy))
+                                    {stableSort(filteredRows, getSorting(order, orderBy))
                                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                        .map((row, index) => {
-                                            const labelId = `enhanced-table-checkbox-${index}`
-
+                                        .map(row => {
                                             return (
                                                 <TableRow
                                                     hover
@@ -148,7 +162,6 @@ export default function CustomerTable(props) {
                                                         <Tooltip title="Delete customer">
                                                             <IconButton onClick={(event) => {
                                                                 event.stopPropagation()
-                                                                // props.deleteCustomer(row.id)
                                                                 setDeleteCustomer(row)
                                                             }}>
                                                                 <DeleteIcon/>
@@ -156,7 +169,7 @@ export default function CustomerTable(props) {
                                                         </Tooltip>
                                                     </TableCell>
 
-                                                    <TableCell component="th" id={labelId} scope="row" padding="none">
+                                                    <TableCell component="th" scope="row" padding="none">
                                                         {row.name}
                                                     </TableCell>
                                                     <TableCell>{row.email}</TableCell>
@@ -172,7 +185,7 @@ export default function CustomerTable(props) {
                         < TablePagination
                             rowsPerPageOptions={[5, 10, 25]}
                             component="div"
-                            count={rows.length}
+                            count={filteredRows.length}
                             rowsPerPage={rowsPerPage}
                             page={page}
                             onChangePage={handleChangePage}
@@ -184,8 +197,14 @@ export default function CustomerTable(props) {
                     customer={deleteCustomer}
                     closeConfirmation={() => setDeleteCustomer(null)}
                     deleteCustomer={props.deleteCustomer}
-                 />
+                />
             </Paper>
         </>
     )
+}
+
+CustomerTable.propTypes = {
+    customers: PropTypes.object,
+    addOrEditCustomer: PropTypes.func.isRequired,
+    deleteCustomer: PropTypes.func.isRequired
 }

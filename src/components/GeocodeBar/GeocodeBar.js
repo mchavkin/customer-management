@@ -37,7 +37,6 @@ export default function GeocodeBar() {
     }
 
     const cancelApiKey = () => {
-        debugger
         setApiKey(persistence.getApiKey())
         setKeyInputActive(false)
     }

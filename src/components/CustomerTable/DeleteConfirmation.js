@@ -34,7 +34,7 @@ export default function DeleteConfirmation(props) {
 }
 
 DeleteConfirmation.propTypes = {
-    customer: PropTypes.object.isRequired,
+    customer: PropTypes.object,
     deleteCustomer: PropTypes.func.isRequired,
     closeConfirmation: PropTypes.func.isRequired
 }

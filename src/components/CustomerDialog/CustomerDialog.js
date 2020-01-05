@@ -15,6 +15,7 @@ import Backdrop from "@material-ui/core/Backdrop"
 import CircularProgress from "@material-ui/core/CircularProgress"
 import AddressInput from "./AddressInput"
 import {messages} from "../../properties/errorsMessages"
+import PropTypes from "prop-types"
 
 const addressFields = ['route', 'street_number', 'locality', 'postal_code', 'country']
 
@@ -78,13 +79,13 @@ export default function CustomerDialog(props) {
 
         const validatedErrors = validateEntry({name, email})
         getGoogleAddress(queryAddress).then(({data}) => {
-            const googleSuggestedAddress = data.results[0]
             if (data.status === 'OK') {
                 const result = data.results[0]
 
                 const addressComponents = result.address_components
                     .filter(comp => addressFields.includes(comp.types[0]))
                     .reduce((a,comp) => ({...a, [comp.types[0]]: comp.short_name}), {})
+
                 setAddressSuggestion(Object.assign(
                     {
                         formatted_address: result.formatted_address
@@ -242,3 +243,9 @@ export default function CustomerDialog(props) {
     )
 }
 
+CustomerDialog.propTypes = {
+    open: PropTypes.bool.isRequired,
+    cancel: PropTypes.func.isRequired,
+    saveCustomer: PropTypes.func.isRequired,
+    customer: PropTypes.object
+}

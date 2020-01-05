@@ -1,6 +1,7 @@
 import React from "react"
 import Grid from "@material-ui/core/Grid"
 import TextField from "@material-ui/core/TextField"
+import PropTypes from "prop-types"
 
 const addressFields = [
     {
@@ -41,4 +42,10 @@ export default function AddressInput(props) {
                 </Grid>)}
         </Grid>
     )
+}
+
+AddressInput.propTypes = {
+    classes: PropTypes.object.isRequired,
+    address: PropTypes.object,
+    inputController: PropTypes.func.isRequired
 }
